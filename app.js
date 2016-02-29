@@ -4,10 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-//var MongoClient = require("mongodb").MongoClient;
 var mongoose = require('mongoose');
-var ObjectID = require("mongodb").ObjectID;
-//const assert = require("assert");
 
 var index = require('./routes/index')
 var tasks = require('./routes/tasks');
@@ -28,18 +25,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-
 //DB connection string.
 var url ="mongodb://localhost:27017/todo"
-
-//The connection. TODO error handling - check if connection opened succesfully.
 
 var db = mongoose.connect(url);
 
 mongoose.connection.on('error', function(err) {
   console.log('Error connecting to MongoDB via Mongoose ' + err)
 });
-
 
 mongoose.connection.once('open', function() {
 

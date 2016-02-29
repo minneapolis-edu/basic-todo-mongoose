@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var Task = require('./../models/task.js');  //TODO specify models
+var Task = require('./../models/task.js');  //Specify model used
 
 
 /*** All incomplete tasks
@@ -24,8 +24,10 @@ router.post('/addtask', function(req, res, next) {
     return next(new Error('no data provided'));
   }
 
+  //Create a new task by instantiating a Task object...
   var newTask = Task({ name : req.body.task_name, completed: false });
 
+  //Then call the save method to save it to the database. Note callback.
   newTask.save(function(err){
     if (err) {
       return next(err);
@@ -33,7 +35,6 @@ router.post('/addtask', function(req, res, next) {
       res.redirect('/tasks');
     }
   });
-
 });
 
 
@@ -64,19 +65,18 @@ router.post('/alldone', function(req, res, next){
 
 
 /**This gets called for any routes with url parameters e.g. DELETE and POST tasks/taskID
- This is REALLY HELPFUL because it provides a task object (_id, name, completed) as req.task
+ This is really helpful because it provides a task object (_id, name, completed) as req.task
  Order matters here. This is beneath the other routes, but above routes which need the parameter.
+ Otherwise it would be called for /tasks/completed which we don't want to do '/completed' isn't an id.
  */
 router.param('task_id', function(req, res, next, taskId) {
 
   console.log("params being extracted from URL for " + taskId);
 
   Task.findById(taskId, function (err, task) {
-
     if (err) {
       return next(err);
     }
-
     req.task = task;
     return next();
 
@@ -84,7 +84,7 @@ router.param('task_id', function(req, res, next, taskId) {
 });
 
 
-/* Complete a task. POST to /tasks/task_id
+/** Complete a task. POST to /tasks/task_id
  Set task with specific ID to completed = true  */
 router.post('/:task_id', function(req, res, next) {
 
@@ -101,7 +101,7 @@ router.post('/:task_id', function(req, res, next) {
 });
 
 
-/* deleteTask
+/** deleteTask
  Delete task with particular ID from database. This is called with AJAX */
 router.delete('/:task_id', function(req, res, next) {
 
